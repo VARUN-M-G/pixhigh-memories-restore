@@ -1,22 +1,71 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { UploadCloud, ArrowRight, Loader2, Image as ImageIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Profile {
+  id: string;
+  full_name: string;
+  avatar_url: string | null;
+}
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
   const [image, setImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
   
-  // Placeholder user data - in real app would come from Supabase
-  const user = {
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    profilePic: "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80"
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url')
+          .eq('id', user.id)
+          .maybeSingle();
+          
+        if (error) {
+          console.error('Error fetching profile:', error);
+          return;
+        }
+        
+        setProfile(data);
+      } catch (error) {
+        console.error('Error in fetchProfile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProfile();
+  }, [user]);
+
+  const getAvatarUrl = async (avatarPath: string) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .getPublicUrl(avatarPath);
+        
+      if (error) {
+        console.error('Error getting avatar URL:', error);
+        return null;
+      }
+      
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error in getAvatarUrl:', error);
+      return null;
+    }
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +94,21 @@ export default function DashboardPage() {
     }, 2000);
   };
 
+  const getNameInitials = (name: string) => {
+    if (!name) return "U";
+    return name.split(" ").map(n => n[0]).join("").toUpperCase();
+  };
+
+  if (loading) {
+    return (
+      <MainLayout withBackground={false}>
+        <div className="flex items-center justify-center h-screen">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout withBackground={false}>
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 py-6">
@@ -52,12 +116,12 @@ export default function DashboardPage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-4">
               <Avatar className="h-12 w-12 border-2 border-white">
-                <AvatarImage src={user.profilePic} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={profile?.avatar_url ? profile.avatar_url : undefined} alt={profile?.full_name || "User"} />
+                <AvatarFallback>{profile?.full_name ? getNameInitials(profile.full_name) : user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-xl font-bold text-white">Welcome, {user.name}</h1>
-                <p className="text-sm text-blue-100">{user.email}</p>
+                <h1 className="text-xl font-bold text-white">Welcome, {profile?.full_name || user?.email?.split('@')[0]}</h1>
+                <p className="text-sm text-blue-100">{user?.email}</p>
               </div>
             </div>
             <div className="mt-4 md:mt-0">
