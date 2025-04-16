@@ -7,7 +7,6 @@ export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    // You could show a loading spinner here
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 

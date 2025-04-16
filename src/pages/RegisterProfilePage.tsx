@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -68,14 +67,15 @@ export default function RegisterProfilePage() {
       }
       
       // Create profile record
-      const { error } = await supabase.from('profiles').insert({
+      const { error } = await supabase.from('users').insert({
         id: user.id,
         full_name: fullName,
         gender: gender || null,
         date_of_birth: date ? date.toISOString() : null,
         phone_number: phoneNumber || null,
         avatar_url: avatarUrl,
-        updated_at: new Date().toISOString()
+        email: user.email || '',
+        username: fullName.replace(/\s+/g, '_').toLowerCase() || user.email?.split('@')[0] || 'user'
       });
       
       if (error) {

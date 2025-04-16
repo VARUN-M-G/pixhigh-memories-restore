@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface Profile {
   id: string;
-  full_name: string;
+  full_name: string | null;
   avatar_url: string | null;
 }
 
@@ -29,7 +28,7 @@ export default function DashboardPage() {
       
       try {
         const { data, error } = await supabase
-          .from('profiles')
+          .from('users')
           .select('id, full_name, avatar_url')
           .eq('id', user.id)
           .maybeSingle();
@@ -39,7 +38,9 @@ export default function DashboardPage() {
           return;
         }
         
-        setProfile(data);
+        if (data) {
+          setProfile(data as Profile);
+        }
       } catch (error) {
         console.error('Error in fetchProfile:', error);
       } finally {
@@ -52,15 +53,10 @@ export default function DashboardPage() {
 
   const getAvatarUrl = async (avatarPath: string) => {
     try {
-      const { data, error } = await supabase.storage
+      const { data } = await supabase.storage
         .from('avatars')
         .getPublicUrl(avatarPath);
         
-      if (error) {
-        console.error('Error getting avatar URL:', error);
-        return null;
-      }
-      
       return data.publicUrl;
     } catch (error) {
       console.error('Error in getAvatarUrl:', error);
@@ -117,7 +113,7 @@ export default function DashboardPage() {
             <div className="flex items-center space-x-4">
               <Avatar className="h-12 w-12 border-2 border-white">
                 <AvatarImage src={profile?.avatar_url ? profile.avatar_url : undefined} alt={profile?.full_name || "User"} />
-                <AvatarFallback>{profile?.full_name ? getNameInitials(profile.full_name) : user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{profile?.full_name ? getNameInitials(profile.full_name) : user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
               </Avatar>
               <div>
                 <h1 className="text-xl font-bold text-white">Welcome, {profile?.full_name || user?.email?.split('@')[0]}</h1>
