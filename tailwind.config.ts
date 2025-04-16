@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -84,13 +88,81 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'slide-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateX(-20px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
+				},
+				'pulse-slow': {
+					'0%, 100%': {
+						opacity: '1'
+					},
+					'50%': {
+						opacity: '0.8'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-out forwards',
+				'slide-in': 'slide-in 0.5s ease-out forwards',
+				'pulse-slow': 'pulse-slow 3s ease-in-out infinite'
+			},
+			backdropBlur: {
+				'xs': '2px',
+			},
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		function({ addUtilities }: { addUtilities: Function }) {
+			const newUtilities = {
+				'.glass': {
+					backgroundColor: 'rgba(255, 255, 255, 0.25)',
+					backdropFilter: 'blur(10px)',
+					borderRadius: '0.5rem',
+					border: '1px solid rgba(255, 255, 255, 0.18)',
+					boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.07)'
+				},
+				'.glass-dark': {
+					backgroundColor: 'rgba(17, 25, 40, 0.75)',
+					backdropFilter: 'blur(10px)',
+					borderRadius: '0.5rem',
+					border: '1px solid rgba(255, 255, 255, 0.125)',
+					boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)'
+				},
+				'.glass-card': {
+					backgroundColor: 'rgba(255, 255, 255, 0.7)',
+					backdropFilter: 'blur(16px)',
+					borderRadius: '0.75rem',
+					border: '1px solid rgba(255, 255, 255, 0.125)',
+					boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.07)'
+				},
+				'.glass-input': {
+					backgroundColor: 'rgba(255, 255, 255, 0.4)',
+					backdropFilter: 'blur(5px)',
+					borderRadius: '0.5rem',
+					border: '1px solid rgba(255, 255, 255, 0.18)'
+				}
+			};
+			addUtilities(newUtilities);
+		}
+	],
 } satisfies Config;
