@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, LogIn, User, LogOut } from "lucide-react";
@@ -10,16 +9,13 @@ export function Navbar() {
   return (
     <nav className="w-full px-4 py-3">
       <div className="container mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <img 
             src="/lovable-uploads/57fcc5bd-960e-4c7a-8db7-cbc849a85311.png"
             alt="Pixhigh Logo" 
             className="h-10 w-auto"
           />
-          <Link to="/" className="text-2xl font-bold text-primary">
-            Pixhigh
-          </Link>
-        </div>
+        </Link>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
             <Link to="/">

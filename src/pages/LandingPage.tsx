@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -27,30 +28,36 @@ export default function LandingPage() {
         </div>
         
         <div className="mt-16 flex flex-col items-center">
-          <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
-          <div className="flex flex-col md:flex-row gap-8 items-center">
+          <h2 className="text-2xl font-semibold mb-4">See the Difference</h2>
+          <div className="flex flex-col md:flex-row gap-8 items-center p-6 bg-gray-100/20 backdrop-blur-sm rounded-xl">
             <div className="flex flex-col items-center">
-              <img 
-                src="/lovable-uploads/4d29d7d4-819f-40ea-a4f8-b056f5420e49.png" 
-                alt="Input Image" 
-                className="w-60 h-auto rounded-lg shadow-lg mb-2"
-              />
-              <p className="text-lg font-medium">Input</p>
-              <p className="text-sm italic text-muted-foreground">From real life</p>
+              <div className="relative overflow-hidden rounded-lg shadow-lg mb-3">
+                <img 
+                  src="/lovable-uploads/4d29d7d4-819f-40ea-a4f8-b056f5420e49.png" 
+                  alt="Before Restoration" 
+                  className="w-60 h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white py-1 px-2 text-sm">
+                  Before
+                </div>
+              </div>
             </div>
             
-            <div className="hidden md:block">
-              <ArrowRight className="h-12 w-12 text-primary" />
+            <div className="flex items-center justify-center">
+              <ArrowRight className="h-8 w-8 text-primary" />
             </div>
             
             <div className="flex flex-col items-center">
-              <img 
-                src="/lovable-uploads/57fcc5bd-960e-4c7a-8db7-cbc849a85311.png" 
-                alt="Output Image" 
-                className="w-60 h-auto rounded-lg shadow-lg mb-2"
-              />
-              <p className="text-lg font-medium">GFP-GAN</p>
-              <p className="text-sm italic text-muted-foreground">Ours</p>
+              <div className="relative overflow-hidden rounded-lg shadow-lg mb-3">
+                <img 
+                  src="/lovable-uploads/57fcc5bd-960e-4c7a-8db7-cbc849a85311.png" 
+                  alt="After Restoration" 
+                  className="w-60 h-auto object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white py-1 px-2 text-sm">
+                  After
+                </div>
+              </div>
             </div>
           </div>
         </div>
