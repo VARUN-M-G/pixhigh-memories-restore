@@ -19,7 +19,7 @@ export default function LandingPage() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
-          <Button size="lg" asChild className="glass-card flex-1 font-semibold gap-2">
+          <Button size="lg" asChild className="glass-card flex-1 font-semibold gap-2 bg-primary hover:bg-primary/90 text-white">
             <Link to="/signup">
               Get Started
               <ArrowRight className="h-4 w-4" />
@@ -28,33 +28,33 @@ export default function LandingPage() {
         </div>
         
         <div className="mt-16 flex flex-col items-center">
-          <h2 className="text-2xl font-semibold mb-4">See the Difference</h2>
-          <div className="flex flex-col md:flex-row gap-8 items-center p-6 bg-gray-100/20 backdrop-blur-sm rounded-xl">
+          <h2 className="text-2xl font-semibold mb-6">See the Difference</h2>
+          <div className="flex flex-col md:flex-row gap-8 items-center p-8 bg-gray-100/30 backdrop-blur-sm rounded-xl shadow-md">
             <div className="flex flex-col items-center">
               <div className="relative overflow-hidden rounded-lg shadow-lg mb-3">
                 <img 
                   src="/lovable-uploads/4d29d7d4-819f-40ea-a4f8-b056f5420e49.png" 
                   alt="Before Restoration" 
-                  className="w-60 h-auto object-cover"
+                  className="w-72 h-auto object-cover"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white py-1 px-2 text-sm">
+                <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white py-2 px-3 text-sm font-medium">
                   Before
                 </div>
               </div>
             </div>
             
             <div className="flex items-center justify-center">
-              <ArrowRight className="h-8 w-8 text-primary" />
+              <ArrowRight className="h-10 w-10 text-primary animate-pulse-slow" />
             </div>
             
             <div className="flex flex-col items-center">
               <div className="relative overflow-hidden rounded-lg shadow-lg mb-3">
                 <img 
-                  src="/lovable-uploads/57fcc5bd-960e-4c7a-8db7-cbc849a85311.png" 
+                  src="/lovable-uploads/651fabb7-571a-4fec-9c31-0e2544550a88.png" 
                   alt="After Restoration" 
-                  className="w-60 h-auto object-cover"
+                  className="w-72 h-auto object-cover"
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white py-1 px-2 text-sm">
+                <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white py-2 px-3 text-sm font-medium">
                   After
                 </div>
               </div>
@@ -63,21 +63,21 @@ export default function LandingPage() {
         </div>
         
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="glass-card p-6 rounded-xl animate-fade-in" style={{animationDelay: '0.2s'}}>
+          <div className="glass-card p-6 rounded-xl animate-fade-in shadow-md hover:shadow-lg transition-all" style={{animationDelay: '0.2s'}}>
             <h3 className="text-xl font-semibold mb-3">Upload Photos</h3>
             <p className="text-muted-foreground">
               Easily upload your old or damaged photos for restoration
             </p>
           </div>
           
-          <div className="glass-card p-6 rounded-xl animate-fade-in" style={{animationDelay: '0.4s'}}>
+          <div className="glass-card p-6 rounded-xl animate-fade-in shadow-md hover:shadow-lg transition-all" style={{animationDelay: '0.4s'}}>
             <h3 className="text-xl font-semibold mb-3">AI Restoration</h3>
             <p className="text-muted-foreground">
               Advanced AI enhances details, colors, and removes damage
             </p>
           </div>
           
-          <div className="glass-card p-6 rounded-xl animate-fade-in" style={{animationDelay: '0.6s'}}>
+          <div className="glass-card p-6 rounded-xl animate-fade-in shadow-md hover:shadow-lg transition-all" style={{animationDelay: '0.6s'}}>
             <h3 className="text-xl font-semibold mb-3">Download & Share</h3>
             <p className="text-muted-foreground">
               Easily download and share your restored memories
