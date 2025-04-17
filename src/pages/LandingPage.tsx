@@ -27,6 +27,35 @@ export default function LandingPage() {
           </Button>
         </div>
         
+        <div className="mt-16 flex flex-col items-center">
+          <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
+          <div className="flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex flex-col items-center">
+              <img 
+                src="/lovable-uploads/4d29d7d4-819f-40ea-a4f8-b056f5420e49.png" 
+                alt="Input Image" 
+                className="w-60 h-auto rounded-lg shadow-lg mb-2"
+              />
+              <p className="text-lg font-medium">Input</p>
+              <p className="text-sm italic text-muted-foreground">From real life</p>
+            </div>
+            
+            <div className="hidden md:block">
+              <ArrowRight className="h-12 w-12 text-primary" />
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <img 
+                src="/lovable-uploads/651fabb7-571a-4fec-9c31-0e2544550a88.png" 
+                alt="Output Image" 
+                className="w-60 h-auto rounded-lg shadow-lg mb-2"
+              />
+              <p className="text-lg font-medium">GFP-GAN</p>
+              <p className="text-sm italic text-muted-foreground">Ours</p>
+            </div>
+          </div>
+        </div>
+        
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="glass-card p-6 rounded-xl animate-fade-in" style={{animationDelay: '0.2s'}}>
             <h3 className="text-xl font-semibold mb-3">Upload Photos</h3>

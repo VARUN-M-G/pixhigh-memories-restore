@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,8 +112,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) {
         console.error('Google OAuth Error Details:', {
           message: error.message,
-          status: error.status,
-          cause: error.cause
+          status: error.status
+          // Removed the 'cause' property since it doesn't exist on AuthError
         });
         toast.error(`Google Sign-In Failed: ${error.message}`);
         throw error;
