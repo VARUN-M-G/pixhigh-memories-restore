@@ -1,12 +1,15 @@
+
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { UploadCloud, ArrowRight, Loader2, Image as ImageIcon } from "lucide-react";
+import { UploadCloud, ArrowRight, Loader2, Image as ImageIcon, Download, Share2, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Navbar } from "@/components/navbar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Profile {
   id: string;
@@ -21,6 +24,7 @@ export default function DashboardPage() {
   const [image, setImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
   
   useEffect(() => {
     const fetchProfile = async () => {
@@ -51,23 +55,39 @@ export default function DashboardPage() {
     fetchProfile();
   }, [user]);
 
-  const getAvatarUrl = async (avatarPath: string) => {
-    try {
-      const { data } = await supabase.storage
-        .from('avatars')
-        .getPublicUrl(avatarPath);
-        
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error in getAvatarUrl:', error);
-      return null;
-    }
+  const getNameInitials = (name: string) => {
+    if (!name) return "U";
+    return name.split(" ").map(n => n[0]).join("").toUpperCase();
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
+    processFile(file);
+  };
+  
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+  
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0]);
+    }
+  };
+  
+  const processFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result) {
@@ -90,16 +110,12 @@ export default function DashboardPage() {
     }, 2000);
   };
 
-  const getNameInitials = (name: string) => {
-    if (!name) return "U";
-    return name.split(" ").map(n => n[0]).join("").toUpperCase();
-  };
-
   if (loading) {
     return (
       <MainLayout withBackground={false}>
+        <Navbar />
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </div>
       </MainLayout>
     );
@@ -107,21 +123,22 @@ export default function DashboardPage() {
 
   return (
     <MainLayout withBackground={false}>
-      <header className="bg-gradient-to-r from-blue-600 to-purple-600 py-6">
+      <Navbar />
+      <header className="bg-gradient-to-r from-blue-600 to-purple-600 py-10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-4">
-              <Avatar className="h-12 w-12 border-2 border-white">
+              <Avatar className="h-16 w-16 border-2 border-white">
                 <AvatarImage src={profile?.avatar_url ? profile.avatar_url : undefined} alt={profile?.full_name || "User"} />
-                <AvatarFallback>{profile?.full_name ? getNameInitials(profile.full_name) : user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                <AvatarFallback className="bg-blue-700 text-white text-xl">{profile?.full_name ? getNameInitials(profile.full_name) : user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-xl font-bold text-white">Welcome, {profile?.full_name || user?.email?.split('@')[0]}</h1>
+                <h1 className="text-2xl font-bold text-white">Welcome, {profile?.full_name || user?.email?.split('@')[0]}</h1>
                 <p className="text-sm text-blue-100">{user?.email}</p>
               </div>
             </div>
             <div className="mt-4 md:mt-0">
-              <Button variant="secondary" asChild className="glass-input">
+              <Button variant="outline" asChild className="glass-input font-medium border-white/30 text-white hover:bg-white/20">
                 <Link to="/profile">
                   View Profile
                 </Link>
@@ -131,148 +148,199 @@ export default function DashboardPage() {
         </div>
       </header>
       
-      <main className="container mx-auto py-8 px-4">
-        <Card className="glass-card mb-8">
-          <CardHeader>
-            <CardTitle>Image Restoration</CardTitle>
-            <CardDescription>Upload an image to restore it with our AI technology</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!image ? (
-              <div 
-                className="border-2 border-dashed border-muted-foreground rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer"
-                onClick={() => document.getElementById("imageUpload")?.click()}
-              >
-                <UploadCloud className="h-16 w-16 text-muted-foreground mb-4" />
-                <p className="text-lg text-muted-foreground mb-2">Drag & drop or click to upload</p>
-                <p className="text-sm text-muted-foreground mb-4">PNG, JPG or WEBP (max 10MB)</p>
-                <input
-                  id="imageUpload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-                <Button 
-                  variant="outline" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    document.getElementById("imageUpload")?.click();
-                  }}
-                >
-                  Select Image
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {processedImage ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Original</p>
-                      <div className="border rounded-lg overflow-hidden">
-                        <img src={image} alt="Original" className="w-full h-auto object-contain" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Restored</p>
-                      <div className="border rounded-lg overflow-hidden">
-                        <img src={processedImage} alt="Restored" className="w-full h-auto object-contain" />
-                      </div>
-                    </div>
+      <main className="container mx-auto py-10 px-4">
+        <Tabs defaultValue="upscaler" className="w-full">
+          <TabsList className="mb-6 w-full max-w-md mx-auto grid grid-cols-2">
+            <TabsTrigger value="upscaler" className="text-base py-3">Image Upscaler</TabsTrigger>
+            <TabsTrigger value="gallery" className="text-base py-3">Your Gallery</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="upscaler">
+            <Card className="glass-card mb-8 border-none shadow-md">
+              <CardHeader>
+                <CardTitle className="text-2xl">Image Upscaler</CardTitle>
+                <CardDescription>Upload an image to enhance it with our AI technology</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!image ? (
+                  <div 
+                    className={`border-2 ${dragActive ? 'border-blue-600 bg-blue-50/30' : 'border-dashed border-gray-300'} rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer transition-all`}
+                    onClick={() => document.getElementById("imageUpload")?.click()}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <UploadCloud className="h-20 w-20 text-blue-600 mb-6" />
+                    <p className="text-xl font-medium mb-2">Drag & drop or click to upload</p>
+                    <p className="text-sm text-muted-foreground mb-6">PNG, JPG or WEBP (max 10MB)</p>
+                    <input
+                      id="imageUpload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                    <Button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        document.getElementById("imageUpload")?.click();
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                    >
+                      Browse Files
+                    </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <div className="border rounded-lg overflow-hidden">
-                      <img src={image} alt="Preview" className="w-full h-auto max-h-[500px] object-contain" />
-                    </div>
-                    <div className="flex justify-between">
-                      <Button 
-                        variant="outline" 
-                        onClick={() => {
-                          setImage(null);
-                          setProcessedImage(null);
-                        }}
-                      >
-                        Change Image
-                      </Button>
-                      <Button 
-                        onClick={processImage} 
-                        disabled={isProcessing}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            Restore Image
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                  <div className="space-y-6">
+                    {processedImage ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium text-muted-foreground">Original Image</p>
+                          <div className="border rounded-lg overflow-hidden bg-gray-50 shadow-sm">
+                            <img src={image} alt="Original" className="w-full h-auto object-contain max-h-[400px]" />
+                          </div>
+                        </div>
+                        <div className="space-y-3">
+                          <p className="text-sm font-medium text-muted-foreground">Enhanced Image</p>
+                          <div className="border rounded-lg overflow-hidden bg-gray-50 shadow-sm">
+                            <img src={processedImage} alt="Enhanced" className="w-full h-auto object-contain max-h-[400px]" />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        <div className="border rounded-lg overflow-hidden bg-gray-50">
+                          <img src={image} alt="Preview" className="w-full h-auto max-h-[500px] object-contain" />
+                        </div>
+                        <div className="flex justify-between">
+                          <Button 
+                            variant="outline" 
+                            onClick={() => {
+                              setImage(null);
+                              setProcessedImage(null);
+                            }}
+                          >
+                            Change Image
+                          </Button>
+                          <Button 
+                            onClick={processImage} 
+                            disabled={isProcessing}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            {isProcessing ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Processing...
+                              </>
+                            ) : (
+                              <>
+                                Enhance Image
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
-          </CardContent>
-          {processedImage && (
-            <CardFooter className="flex justify-end">
-              <Button variant="outline" className="mr-2">
-                <ImageIcon className="mr-2 h-4 w-4" />
-                Save to Gallery
-              </Button>
-              <Button>
-                Download Restored Image
-              </Button>
-            </CardFooter>
-          )}
-        </Card>
+              </CardContent>
+              {processedImage && (
+                <CardFooter className="flex justify-end gap-3">
+                  <Button variant="outline">
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Share
+                  </Button>
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                  </Button>
+                </CardFooter>
+              )}
+            </Card>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Recent Photos</CardTitle>
-              <CardDescription>View your recently restored photos</CardDescription>
-            </CardHeader>
-            <CardContent className="h-40 flex items-center justify-center border-2 border-dashed border-muted rounded-lg">
-              <p className="text-muted-foreground">No photos yet</p>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">View All</Button>
-            </CardFooter>
-          </Card>
+            <div className="mt-10">
+              <h2 className="text-2xl font-bold mb-6">Image Enhancement Features</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="glass-card border-none shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">4x Upscaling</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Increase resolution by up to 4x while maintaining quality</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="glass-card border-none shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">Face Enhancement</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Restore facial details in old photos</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="glass-card border-none shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">Noise Removal</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Clean up digital noise and artifacts</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="glass-card border-none shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">Color Correction</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Fix color balance and restore faded images</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
           
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Restoration Tips</CardTitle>
-              <CardDescription>Get the most out of your restorations</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="text-sm">• Use high-resolution images when possible</p>
-              <p className="text-sm">• Photos with clear faces work best</p>
-              <p className="text-sm">• Original color photos restore better than B&W</p>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">Learn More</Button>
-            </CardFooter>
-          </Card>
-          
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Share Memories</CardTitle>
-              <CardDescription>Share your restored photos with loved ones</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm">Create albums and share directly with family and friends.</p>
-              <Button variant="outline" className="w-full">Create Album</Button>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full">Learn More</Button>
-            </CardFooter>
-          </Card>
-        </div>
+          <TabsContent value="gallery">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-4">Your Enhanced Images</h2>
+              <p className="text-muted-foreground">View and manage your previously enhanced photos</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="glass-card overflow-hidden border-none shadow-md">
+                  <div className="relative aspect-video bg-gray-100">
+                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                      <ImageIcon className="h-12 w-12 opacity-20" />
+                    </div>
+                  </div>
+                  <CardFooter className="flex justify-between py-3">
+                    <p className="text-sm font-medium">Image {i}</p>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))}
+              
+              {/* Empty state placeholders */}
+              {[4, 5, 6].map((i) => (
+                <Card key={i} className="glass-card overflow-hidden border-dashed border-gray-200 bg-gray-50/50 shadow-none">
+                  <div className="aspect-video flex items-center justify-center">
+                    <p className="text-muted-foreground">Empty slot</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
     </MainLayout>
   );
