@@ -12,7 +12,7 @@ export function Navbar() {
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img 
-            src="/lovable-uploads/651fabb7-571a-4fec-9c31-0e2544550a88.png"
+            src="/lovable-uploads/57fcc5bd-960e-4c7a-8db7-cbc849a85311.png"
             alt="Pixhigh Logo" 
             className="h-10 w-auto"
           />
