@@ -38,7 +38,7 @@ export function Navbar() {
         <Link to="/" className="flex items-center gap-3">
           <img 
             alt="Pixhigh Logo" 
-            className="h-16 w-auto" 
+            className="h-20 w-auto" 
             src="/lovable-uploads/240e9a32-401f-482d-914c-85046ee2364a.png" 
           />
         </Link>

@@ -19,10 +19,14 @@ export default function LandingPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto justify-center">
-            <Button size="lg" asChild className="glass-card flex-1 font-semibold gap-2 bg-primary hover:bg-primary/90 text-white">
+            <Button 
+              size="lg" 
+              asChild 
+              className="glass-card flex-1 font-semibold gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg border-0"
+            >
               <Link to="/signup">
                 Try Free
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -39,7 +43,7 @@ export default function LandingPage() {
                   className="w-full h-auto object-cover"
                 />
               </div>
-              <div className="absolute top-4 left-4 bg-black/70 text-white py-2 px-3 text-sm font-medium rounded-md">
+              <div className="absolute top-4 left-4 bg-black/70 text-white py-2 px-4 text-sm font-medium rounded-md">
                 Before
               </div>
             </div>
@@ -52,7 +56,7 @@ export default function LandingPage() {
                   className="w-full h-auto object-cover"
                 />
               </div>
-              <div className="absolute top-4 left-4 bg-blue-600 text-white py-2 px-3 text-sm font-medium rounded-md">
+              <div className="absolute top-4 left-4 bg-blue-600 text-white py-2 px-4 text-sm font-medium rounded-md">
                 After
               </div>
             </div>
@@ -155,10 +159,14 @@ export default function LandingPage() {
         
         <div className="mt-20 w-full text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Photos?</h2>
-          <Button size="lg" asChild className="glass-card font-semibold gap-2 bg-primary hover:bg-primary/90 text-white px-8">
+          <Button 
+            size="lg" 
+            asChild 
+            className="glass-card font-semibold gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 shadow-lg border-0"
+          >
             <Link to="/signup">
               Get Started Now
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-5 w-5" />
             </Link>
           </Button>
         </div>
