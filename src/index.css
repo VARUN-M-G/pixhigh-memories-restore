@@ -100,12 +100,13 @@
 
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/85 backdrop-blur-md border border-white/30 shadow-lg;
+    @apply bg-white/90 backdrop-blur-md border border-white/40 shadow-lg;
   }
   
   .primary-button {
@@ -118,6 +119,14 @@
   
   .cta-button {
     @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200;
+  }
+  
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   .btn-shine {

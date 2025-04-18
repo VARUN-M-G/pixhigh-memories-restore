@@ -1,16 +1,19 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, LogIn, User, LogOut, Menu, X } from "lucide-react";
+import { LogIn, User, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export function Navbar() {
   const { user, signOut } = useAuth();
   const isMobile = useIsMobile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   
   const toggleMobileMenu = () => {
     setMobileMenuOpen(prev => !prev);
@@ -31,8 +34,8 @@ export function Navbar() {
   }, []);
 
   return (
-    <nav className={`w-full px-4 py-3 sticky top-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-background/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
+    <nav className={`w-full px-4 py-2 sticky top-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm border-b border-gray-200 dark:border-gray-800' : 'bg-transparent'
     }`}>
       <div className="container mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
@@ -60,14 +63,18 @@ export function Navbar() {
             
             {mobileMenuOpen && (
               <div className="absolute right-0 top-14 w-60 rounded-lg shadow-xl py-2 bg-white dark:bg-gray-800 glass-card z-50 animate-fade-in">
-                <Link 
-                  to="/" 
-                  className="block px-5 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3" 
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Home className="h-5 w-5 text-blue-600" />
-                  <span className="font-medium">Home</span>
-                </Link>
+                {!isHomePage && (
+                  <Link 
+                    to="/" 
+                    className="block px-5 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3" 
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span className="font-medium">Home</span>
+                  </Link>
+                )}
                 
                 {user ? (
                   <>
@@ -129,12 +136,16 @@ export function Navbar() {
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild className="font-medium">
-              <Link to="/">
-                <Home className="h-4 w-4 mr-2" />
-                Home
-              </Link>
-            </Button>
+            {!isHomePage && (
+              <Button variant="ghost" size="sm" asChild className="font-medium">
+                <Link to="/">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                  Home
+                </Link>
+              </Button>
+            )}
             
             {user ? (
               <>
