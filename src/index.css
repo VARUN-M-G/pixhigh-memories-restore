@@ -105,14 +105,48 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
+    @apply bg-white/85 backdrop-blur-md border border-white/30 shadow-lg;
   }
   
   .primary-button {
-    @apply bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-md;
+    @apply bg-blue-600 text-white hover:bg-blue-700 font-semibold shadow-md;
   }
   
   .secondary-button {
     @apply bg-white text-blue-600 hover:bg-gray-50 border border-blue-100 font-medium shadow-sm;
+  }
+  
+  .cta-button {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200;
+  }
+  
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite ease-in-out;
+  }
+  
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(30deg);
+    }
+    100% {
+      transform: translateX(100%) translateY(100%) rotate(30deg);
+    }
   }
 }

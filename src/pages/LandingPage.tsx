@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -20,13 +19,14 @@ export default function LandingPage() {
           
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto justify-center">
             <Button 
-              size="lg" 
+              size="xl" 
               asChild 
-              className="glass-card flex-1 font-semibold gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg border-0"
+              variant="cta"
+              className="shadow-xl rounded-xl"
             >
               <Link to="/signup">
-                Try Free
-                <ArrowRight className="h-5 w-5" />
+                <span className="text-lg">Try Free</span>
+                <ArrowRight className="h-5 w-5 ml-1" />
               </Link>
             </Button>
           </div>
@@ -160,13 +160,14 @@ export default function LandingPage() {
         <div className="mt-20 w-full text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Transform Your Photos?</h2>
           <Button 
-            size="lg" 
+            size="xl" 
             asChild 
-            className="glass-card font-semibold gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 shadow-lg border-0"
+            variant="cta"
+            className="shadow-xl rounded-xl px-10"
           >
             <Link to="/signup">
-              Get Started Now
-              <ArrowRight className="h-5 w-5" />
+              <span className="text-lg">Get Started Now</span>
+              <ArrowRight className="h-5 w-5 ml-1" />
             </Link>
           </Button>
         </div>
