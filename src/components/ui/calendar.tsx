@@ -2,7 +2,6 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
-
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -22,7 +21,11 @@ function Calendar({
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",
+        caption_dropdowns: "flex gap-1",
         caption_label: "text-sm font-medium",
+        dropdown: "relative z-10",
+        dropdown_month: "flex-1",
+        dropdown_year: "flex-1",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
@@ -50,15 +53,7 @@ function Calendar({
         day_range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
-        caption_dropdowns: "flex gap-1",
-        dropdown: "relative z-10",
-        dropdown_month: "flex-1",
-        dropdown_year: "flex-1",
         dropdown_icon: "h-4 w-4 opacity-50",
-        dropdown_button: cn(
-          buttonVariants({ variant: "outline" }),
-          "w-full px-2 py-1 flex items-center justify-between text-sm"
-        ),
         dropdown_menu: "rounded-md border bg-popover p-1 shadow-md",
         dropdown_menu_item: cn(
           buttonVariants({ variant: "ghost" }),
@@ -74,6 +69,9 @@ function Calendar({
         IconLeft: ({ ..._props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ..._props }) => <ChevronRight className="h-4 w-4" />,
       }}
+      captionLayout="dropdown-buttons"
+      fromYear={1940}
+      toYear={2024}
       {...props}
     />
   );
@@ -81,3 +79,4 @@ function Calendar({
 Calendar.displayName = "Calendar";
 
 export { Calendar };
+
