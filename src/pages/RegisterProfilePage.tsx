@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +10,12 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, UploadCloud, X, Loader2 } from "lucide-react";
+import { CalendarIcon, UploadCloud, X, Loader2, UserCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function RegisterProfilePage() {
   const { user } = useAuth();
@@ -26,6 +28,16 @@ export default function RegisterProfilePage() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [defaultAvatarUrl, setDefaultAvatarUrl] = useState("");
+
+  // Generate default avatar URL based on user's email
+  useEffect(() => {
+    if (user?.email) {
+      const seed = user.email.replace(/@.*$/, "");
+      const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=4f46e5`;
+      setDefaultAvatarUrl(avatarUrl);
+    }
+  }, [user?.email]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -52,6 +64,25 @@ export default function RegisterProfilePage() {
       // Upload profile image if exists
       let avatarUrl = null;
       if (imageFile) {
+        // Check if the bucket exists, create it if it doesn't
+        const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+        
+        if (bucketsError) {
+          throw new Error(`Error checking buckets: ${bucketsError.message}`);
+        }
+        
+        const avatarsBucketExists = buckets.some(bucket => bucket.name === 'avatars');
+        
+        if (!avatarsBucketExists) {
+          const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
+            public: true
+          });
+          
+          if (createBucketError) {
+            throw new Error(`Error creating avatars bucket: ${createBucketError.message}`);
+          }
+        }
+        
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${user.id}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         
@@ -63,7 +94,11 @@ export default function RegisterProfilePage() {
           throw new Error(`Error uploading image: ${uploadError.message}`);
         }
         
-        avatarUrl = `${fileName}`;
+        const { data: publicUrlData } = await supabase.storage.from('avatars').getPublicUrl(fileName);
+        avatarUrl = publicUrlData.publicUrl;
+      } else {
+        // Use the default avatar if no image is uploaded
+        avatarUrl = defaultAvatarUrl;
       }
       
       // Create profile record
@@ -94,7 +129,10 @@ export default function RegisterProfilePage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto flex justify-center items-center px-4 py-10">
+      <div className="container mx-auto flex flex-col justify-center items-center px-4 py-10">
+        <div className="mb-8">
+          <img src="/lovable-uploads/651fabb7-571a-4fec-9c31-0e2544550a88.png" alt="Pixhigh Logo" className="h-12" />
+        </div>
         <Card className="w-full max-w-md glass-card animate-fade-in">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">Complete Your Profile</CardTitle>
@@ -104,7 +142,63 @@ export default function RegisterProfilePage() {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
+              {/* Profile Picture Section - Moved to the top */}
+              <div className="space-y-2 flex flex-col items-center">
+                <Label className="text-center">Profile Picture (Optional)</Label>
+                
+                {profileImage ? (
+                  <div className="relative w-32 h-32 mx-auto">
+                    <Avatar className="w-32 h-32 border-2 border-primary">
+                      <AvatarImage 
+                        src={profileImage} 
+                        alt="Profile Preview" 
+                        className="object-cover"
+                      />
+                    </Avatar>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-8 w-8"
+                      type="button"
+                      onClick={() => {
+                        setProfileImage(null);
+                        setImageFile(null);
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center space-y-4">
+                    <Avatar className="w-32 h-32 border-2 border-primary">
+                      <AvatarImage src={defaultAvatarUrl} alt="Default Avatar" />
+                      <AvatarFallback><UserCircle className="w-20 h-20" /></AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex items-center justify-center">
+                      <Input
+                        id="profilePicture"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center"
+                        onClick={() => document.getElementById("profilePicture")?.click()}
+                      >
+                        <UploadCloud className="mr-2 h-4 w-4" />
+                        Select Image
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="space-y-2 mt-6">
                 <Label htmlFor="fullName">Full Name</Label>
                 <Input 
                   id="fullName" 
@@ -146,13 +240,16 @@ export default function RegisterProfilePage() {
                       {date ? format(date, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 pointer-events-auto">
+                  <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
                     <Calendar
                       mode="single"
                       selected={date}
                       onSelect={setDate}
                       initialFocus
-                      className="p-3"
+                      className="p-3 pointer-events-auto"
+                      captionLayout="dropdown-buttons"
+                      fromYear={1940}
+                      toYear={2023}
                     />
                   </PopoverContent>
                 </Popover>
@@ -167,52 +264,6 @@ export default function RegisterProfilePage() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                 />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Profile Picture (Optional)</Label>
-                
-                {profileImage ? (
-                  <div className="relative w-32 h-32 mx-auto">
-                    <img
-                      src={profileImage}
-                      alt="Profile Preview"
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="absolute -top-2 -right-2 h-6 w-6"
-                      type="button"
-                      onClick={() => {
-                        setProfileImage(null);
-                        setImageFile(null);
-                      }}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="border-2 border-dashed border-muted-foreground rounded-lg p-6 flex flex-col items-center justify-center">
-                    <UploadCloud className="h-10 w-10 text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground mb-2">Drag & drop or click to upload</p>
-                    <Input
-                      id="profilePicture"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => document.getElementById("profilePicture")?.click()}
-                    >
-                      Select Image
-                    </Button>
-                  </div>
-                )}
               </div>
             </CardContent>
             <CardFooter>

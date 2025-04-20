@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
@@ -16,7 +17,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn("p-3 pointer-events-auto", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -49,6 +50,24 @@ function Calendar({
         day_range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
+        caption_dropdowns: "flex gap-1",
+        dropdown: "relative z-10",
+        dropdown_month: "flex-1",
+        dropdown_year: "flex-1",
+        dropdown_icon: "h-4 w-4 opacity-50",
+        dropdown_button: cn(
+          buttonVariants({ variant: "outline" }),
+          "w-full px-2 py-1 flex items-center justify-between text-sm"
+        ),
+        dropdown_menu: "rounded-md border bg-popover p-1 shadow-md",
+        dropdown_menu_item: cn(
+          buttonVariants({ variant: "ghost" }),
+          "w-full justify-start px-2 py-1 text-sm"
+        ),
+        dropdown_menu_item_selected: cn(
+          buttonVariants({ variant: "ghost" }),
+          "bg-accent text-accent-foreground"
+        ),
         ...classNames,
       }}
       components={{
