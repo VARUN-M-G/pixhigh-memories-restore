@@ -33,7 +33,7 @@ export default function RegisterProfilePage() {
   // Generate default avatar URL based on user's email
   useEffect(() => {
     if (user?.email) {
-      const seed = user.email.replace(/@.*$/, "");
+      const seed = encodeURIComponent(user.email.replace(/@.*$/, ""));
       const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=4f46e5`;
       setDefaultAvatarUrl(avatarUrl);
     }
@@ -62,27 +62,9 @@ export default function RegisterProfilePage() {
     
     try {
       // Upload profile image if exists
-      let avatarUrl = null;
+      let avatarUrl = defaultAvatarUrl; // Default to the generated avatar
+      
       if (imageFile) {
-        // Check if the bucket exists, create it if it doesn't
-        const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-        
-        if (bucketsError) {
-          throw new Error(`Error checking buckets: ${bucketsError.message}`);
-        }
-        
-        const avatarsBucketExists = buckets.some(bucket => bucket.name === 'avatars');
-        
-        if (!avatarsBucketExists) {
-          const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
-            public: true
-          });
-          
-          if (createBucketError) {
-            throw new Error(`Error creating avatars bucket: ${createBucketError.message}`);
-          }
-        }
-        
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${user.id}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         
@@ -96,9 +78,6 @@ export default function RegisterProfilePage() {
         
         const { data: publicUrlData } = await supabase.storage.from('avatars').getPublicUrl(fileName);
         avatarUrl = publicUrlData.publicUrl;
-      } else {
-        // Use the default avatar if no image is uploaded
-        avatarUrl = defaultAvatarUrl;
       }
       
       // Create profile record
@@ -131,7 +110,7 @@ export default function RegisterProfilePage() {
     <MainLayout>
       <div className="container mx-auto flex flex-col justify-center items-center px-4 py-10">
         <div className="mb-8">
-          <img src="/lovable-uploads/651fabb7-571a-4fec-9c31-0e2544550a88.png" alt="Pixhigh Logo" className="h-12" />
+          <h1 className="text-3xl font-bold text-primary">Pixhigh</h1>
         </div>
         <Card className="w-full max-w-md glass-card animate-fade-in">
           <CardHeader>
@@ -247,9 +226,6 @@ export default function RegisterProfilePage() {
                       onSelect={setDate}
                       initialFocus
                       className="p-3 pointer-events-auto"
-                      captionLayout="dropdown-buttons"
-                      fromYear={1940}
-                      toYear={2023}
                     />
                   </PopoverContent>
                 </Popover>
