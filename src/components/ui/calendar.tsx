@@ -54,15 +54,6 @@ function Calendar({
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
         dropdown_icon: "h-4 w-4 opacity-50",
-        dropdown_menu: "rounded-md border bg-popover p-1 shadow-md",
-        dropdown_menu_item: cn(
-          buttonVariants({ variant: "ghost" }),
-          "w-full justify-start px-2 py-1 text-sm"
-        ),
-        dropdown_menu_item_selected: cn(
-          buttonVariants({ variant: "ghost" }),
-          "bg-accent text-accent-foreground"
-        ),
         ...classNames,
       }}
       components={{
@@ -79,4 +70,3 @@ function Calendar({
 Calendar.displayName = "Calendar";
 
 export { Calendar };
-
