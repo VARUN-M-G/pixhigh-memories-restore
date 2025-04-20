@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import anime from "animejs";
+import * as anime from "animejs";
 
 interface BackgroundGradientProps {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ const BackgroundGradient = ({
   const cornerBottomRightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timeline = anime.timeline({
+    const timeline = anime.default.timeline({
       loop: true,
       direction: 'alternate',
       easing: 'easeInOutSine'
@@ -34,7 +34,7 @@ const BackgroundGradient = ({
         opacity: [0.1, 0.3],
         scale: [1, 1.2],
         duration: 3000,
-        delay: anime.stagger(200)
+        delay: anime.default.stagger(200)
       });
   }, []);
 
