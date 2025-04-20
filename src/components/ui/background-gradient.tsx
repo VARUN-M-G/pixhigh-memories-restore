@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import anime from "animejs/lib/anime.es.js";
+import anime from "animejs";
 
 interface BackgroundGradientProps {
   children: React.ReactNode;
