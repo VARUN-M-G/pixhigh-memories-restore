@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -136,13 +135,6 @@ export default function DashboardPage() {
                 <h1 className="text-2xl font-bold text-white">Welcome, {profile?.full_name || user?.email?.split('@')[0]}</h1>
                 <p className="text-sm text-blue-100">{user?.email}</p>
               </div>
-            </div>
-            <div className="mt-4 md:mt-0">
-              <Button variant="outline" asChild className="glass-input font-medium border-white/30 text-white hover:bg-white/20">
-                <Link to="/profile">
-                  View Profile
-                </Link>
-              </Button>
             </div>
           </div>
         </div>
@@ -330,7 +322,6 @@ export default function DashboardPage() {
                 </Card>
               ))}
               
-              {/* Empty state placeholders */}
               {[4, 5, 6].map((i) => (
                 <Card key={i} className="glass-card overflow-hidden border-dashed border-gray-200 bg-gray-50/50 shadow-none">
                   <div className="aspect-video flex items-center justify-center">

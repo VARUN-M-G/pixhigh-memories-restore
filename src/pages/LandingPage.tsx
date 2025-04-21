@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -9,7 +8,12 @@ import { BackgroundGradient } from "@/components/ui/background-gradient";
 export default function LandingPage() {
   return (
     <MainLayout>
-      <div className="relative min-h-screen">
+      <div
+        className="relative min-h-screen"
+        style={{
+          background: "linear-gradient(109.6deg, #D3E4FD 11.2%, #F1F0FB 91.1%)"
+        }}
+      >
         <BackgroundGradient className="fixed inset-0 -z-10">
           {/* Providing children prop to fix the TypeScript error */}
           <div></div>
