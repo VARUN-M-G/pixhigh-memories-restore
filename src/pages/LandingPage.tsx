@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -10,7 +11,8 @@ export default function LandingPage() {
     <MainLayout>
       <div className="relative min-h-screen">
         <BackgroundGradient className="fixed inset-0 -z-10">
-          {/* Background elements are inside BackgroundGradient */}
+          {/* Providing children prop to fix the TypeScript error */}
+          <div></div>
         </BackgroundGradient>
         
         <Navbar />

@@ -65,7 +65,7 @@ function Calendar({
       toYear={2025}
       ISOWeek={true}
       fixedWeeks={true}
-      includeToday={true}
+      // Removed the 'includeToday' property as it's not a valid prop for DayPicker
       {...props}
     />
   );
