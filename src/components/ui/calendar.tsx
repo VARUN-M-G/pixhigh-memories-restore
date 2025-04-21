@@ -62,7 +62,10 @@ function Calendar({
       }}
       captionLayout="dropdown-buttons"
       fromYear={1940}
-      toYear={2024}
+      toYear={2025}
+      ISOWeek={true}
+      fixedWeeks={true}
+      includeToday={true}
       {...props}
     />
   );
