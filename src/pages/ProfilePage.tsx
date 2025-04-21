@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -37,11 +36,9 @@ export default function ProfilePage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch user data from Supabase
   useEffect(() => {
     async function fetchUserData() {
       if (!authUser?.id) return;
-      
       try {
         setLoading(true);
         const { data, error } = await supabase
@@ -57,19 +54,19 @@ export default function ProfilePage() {
         }
 
         if (data) {
+          const utcDate = data.date_of_birth
+            ? new Date(data.date_of_birth + "T00:00:00Z")
+            : null;
           setUser({
             id: data.id,
             name: data.full_name || "",
             email: data.email || authUser.email || "",
             gender: data.gender || "",
-            dob: data.date_of_birth ? new Date(data.date_of_birth) : null,
+            dob: utcDate,
             phone: data.phone_number || "",
             profilePic: data.avatar_url || ""
           });
-          
-          if (data.date_of_birth) {
-            setDate(new Date(data.date_of_birth));
-          }
+          setDate(utcDate ? new Date(utcDate) : undefined);
         }
       } catch (error) {
         console.error("Error in fetchUserData:", error);
@@ -90,45 +87,44 @@ export default function ProfilePage() {
 
   const handleUpdate = async () => {
     if (!authUser) return;
-    
     setIsSubmitting(true);
-    
+
     try {
-      // Upload new profile image if exists
       let avatarUrl = user.profilePic;
-      
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${authUser.id}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-        
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('avatars')
           .upload(fileName, imageFile);
-          
+
         if (uploadError) {
           throw new Error(`Error uploading image: ${uploadError.message}`);
         }
-        
+
         const { data: publicUrlData } = await supabase.storage.from('avatars').getPublicUrl(fileName);
         avatarUrl = publicUrlData.publicUrl;
       }
-      
-      // Update profile record
+
+      let dateString = date
+        ? date.toISOString().slice(0, 10)
+        : null;
+
       const { error } = await supabase
         .from('users')
         .update({
           full_name: user.name,
           gender: user.gender || null,
-          date_of_birth: date ? date.toISOString() : null,
+          date_of_birth: dateString,
           phone_number: user.phone || null,
           avatar_url: avatarUrl
         })
         .eq('id', authUser.id);
-      
+
       if (error) {
         throw new Error(`Error updating profile: ${error.message}`);
       }
-      
+
       toast.success('Profile updated successfully!');
       setIsEditing(false);
       setImageFile(null);
@@ -152,6 +148,7 @@ export default function ProfilePage() {
 
   return (
     <MainLayout withBackground={false}>
+      <div className="fixed inset-0 -z-20 bg-gradient-to-br from-blue-100 via-white to-purple-100" />
       <div className="container mx-auto py-8 px-4">
         <div className="mb-6">
           <Button variant="ghost" asChild className="pl-0">
@@ -167,19 +164,19 @@ export default function ProfilePage() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : (
-          <Card className="glass-card max-w-2xl mx-auto">
+          <Card className="glass-card max-w-2xl mx-auto rounded-2xl shadow-2xl border-none bg-white/95 backdrop-blur-md">
             <CardHeader className="relative">
               <div className="absolute right-6 top-6">
-                <Button variant="ghost" size="icon" onClick={() => setIsEditing(!isEditing)}>
+                <Button variant="ghost" size="icon" onClick={() => setIsEditing(!isEditing)} className="rounded-full border border-gray-200 shadow-sm hover:bg-gray-50">
                   <Edit2 className="h-4 w-4" />
                 </Button>
               </div>
               <div className="flex flex-col items-center">
-                <Avatar className="h-20 w-20 mb-2">
+                <Avatar className="h-20 w-20 mb-2 border-2 border-white shadow-md">
                   <AvatarImage src={user.profilePic} alt={user.name} />
-                  <AvatarFallback>{user.name?.charAt(0) || "U"}</AvatarFallback>
+                  <AvatarFallback className="bg-gray-200">{user.name?.charAt(0) || "U"}</AvatarFallback>
                 </Avatar>
-                <CardTitle className="text-2xl font-bold text-center">{user.name || "User"}</CardTitle>
+                <CardTitle className="text-2xl font-bold text-center text-gray-900">{user.name || "User"}</CardTitle>
                 <CardDescription className="text-center">{user.email}</CardDescription>
               </div>
             </CardHeader>
@@ -189,28 +186,28 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="fullName">Full Name</Label>
                     <Input 
-                      id="fullName" 
+                      id="fullName"
                       value={user.name}
                       onChange={(e) => setUser({ ...user, name: e.target.value })}
                       className="glass-input"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input 
-                      id="email" 
+                      id="email"
                       value={user.email}
                       disabled
                       className="glass-input opacity-70"
                     />
                     <p className="text-xs text-muted-foreground">Email cannot be changed</p>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="gender">Gender</Label>
                     <Select 
-                      value={user.gender} 
+                      value={user.gender}
                       onValueChange={(value) => setUser({ ...user, gender: value })}
                     >
                       <SelectTrigger className="glass-input">
@@ -224,13 +221,13 @@ export default function ProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="dateOfBirth">Date of Birth</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           className={cn(
                             "w-full justify-start text-left font-normal glass-input",
                             !date && "text-muted-foreground"
@@ -251,23 +248,23 @@ export default function ProfilePage() {
                       </PopoverContent>
                     </Popover>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input 
-                      id="phoneNumber" 
+                      id="phoneNumber"
                       value={user.phone}
                       onChange={(e) => setUser({ ...user, phone: e.target.value })}
                       className="glass-input"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label>Profile Picture</Label>
                     <div className="flex items-center space-x-4">
-                      <Avatar className="h-16 w-16">
+                      <Avatar className="h-16 w-16 border border-gray-100">
                         <AvatarImage src={user.profilePic} alt={user.name} />
-                        <AvatarFallback>{user.name?.charAt(0) || "U"}</AvatarFallback>
+                        <AvatarFallback className="bg-gray-200">{user.name?.charAt(0) || "U"}</AvatarFallback>
                       </Avatar>
                       <div>
                         <Input
@@ -278,8 +275,9 @@ export default function ProfilePage() {
                           onChange={handleImageChange}
                         />
                         <Button 
-                          variant="outline" 
+                          variant="outline"
                           size="sm"
+                          className="rounded-2xl"
                           onClick={() => document.getElementById("profilePicture")?.click()}
                         >
                           <UploadCloud className="mr-2 h-4 w-4" />
@@ -308,7 +306,7 @@ export default function ProfilePage() {
                       <p>{user.email}</p>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">Gender</h3>
@@ -316,10 +314,14 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">Date of Birth</h3>
-                      <p>{user.dob ? format(user.dob, "PPP") : "Not provided"}</p>
+                      <p>
+                        {user.dob
+                          ? format(user.dob, "PPP")
+                          : "Not provided"}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-1">Phone Number</h3>
                     <p>{user.phone || "Not provided"}</p>
@@ -330,10 +332,11 @@ export default function ProfilePage() {
             <CardFooter className={isEditing ? "justify-between" : "justify-center"}>
               {isEditing ? (
                 <>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                  <Button variant="outline" className="rounded-2xl" onClick={() => setIsEditing(false)}>Cancel</Button>
                   <Button 
-                    onClick={handleUpdate} 
+                    onClick={handleUpdate}
                     disabled={isSubmitting}
+                    className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white px-6"
                   >
                     {isSubmitting ? (
                       <>
@@ -344,7 +347,7 @@ export default function ProfilePage() {
                   </Button>
                 </>
               ) : (
-                <Button variant="ghost" className="text-destructive" onClick={handleLogout}>
+                <Button variant="ghost" className="text-destructive rounded-2xl" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Log Out
                 </Button>

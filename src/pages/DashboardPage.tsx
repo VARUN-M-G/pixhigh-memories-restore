@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -330,7 +329,6 @@ export default function DashboardPage() {
                 </Card>
               ))}
               
-              {/* Empty state placeholders */}
               {[4, 5, 6].map((i) => (
                 <Card key={i} className="glass-card overflow-hidden border-dashed border-gray-200 bg-gray-50/50 shadow-none">
                   <div className="aspect-video flex items-center justify-center">
