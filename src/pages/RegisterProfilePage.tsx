@@ -81,7 +81,7 @@ export default function RegisterProfilePage() {
         id: user.id,
         full_name: fullName,
         gender: gender || null,
-        date_of_birth: date ? format(date, 'yyyy-MM-dd') : null,
+        date_of_birth: date ? new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0] : null,
         phone_number: phoneNumber || null,
         avatar_url: avatarUrl,
         email: user.email || '',
