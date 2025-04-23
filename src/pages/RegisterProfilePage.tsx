@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,6 @@ export default function RegisterProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [defaultAvatarUrl, setDefaultAvatarUrl] = useState("");
 
-  // Generate default avatar URL based on user's email
   useEffect(() => {
     if (user?.email) {
       const seed = encodeURIComponent(user.email.replace(/@.*$/, ""));
@@ -61,8 +59,7 @@ export default function RegisterProfilePage() {
     setIsSubmitting(true);
     
     try {
-      // Upload profile image if exists
-      let avatarUrl = defaultAvatarUrl; // Default to the generated avatar
+      let avatarUrl = defaultAvatarUrl;
       
       if (imageFile) {
         const fileExt = imageFile.name.split('.').pop();
@@ -80,12 +77,11 @@ export default function RegisterProfilePage() {
         avatarUrl = publicUrlData.publicUrl;
       }
       
-      // Create profile record
       const { error } = await supabase.from('users').insert({
         id: user.id,
         full_name: fullName,
         gender: gender || null,
-        date_of_birth: date ? date.toISOString() : null,
+        date_of_birth: date ? format(date, 'yyyy-MM-dd') : null,
         phone_number: phoneNumber || null,
         avatar_url: avatarUrl,
         email: user.email || '',
@@ -121,7 +117,6 @@ export default function RegisterProfilePage() {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              {/* Profile Picture Section - Moved to the top */}
               <div className="space-y-2 flex flex-col items-center">
                 <Label className="text-center">Profile Picture (Optional)</Label>
                 
