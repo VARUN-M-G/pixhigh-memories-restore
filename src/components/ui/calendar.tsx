@@ -15,17 +15,17 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-4 rounded-xl bg-white shadow-lg", className)}
+      className={cn("p-4 bg-white rounded-lg shadow-sm", className)}
       classNames={{
         months: "flex flex-col sm:flex-row gap-6 justify-center",
-        month: "space-y-3 w-full sm:w-auto",
+        month: "space-y-4",
         caption: "flex justify-between items-center px-4",
         caption_dropdowns: "flex gap-2 items-center",
         caption_label: "text-sm font-semibold text-gray-800",
-        dropdown: "relative",
+        dropdown: "relative z-10",
         dropdown_month: "w-24",
         dropdown_year: "w-28",
-        dropdown_icon: "h-4 w-4 opacity-60",
+        dropdown_icon: "h-4 w-4 text-gray-500",
         nav: "flex items-center gap-2",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
@@ -45,10 +45,30 @@ function Calendar({
           "w-full h-full p-0 text-sm rounded-md hover:bg-gray-100 focus:outline-none"
         ),
         day_today:
-          "border border-primary font-semibold bg-blue-50 text-blue-700",
+          "border-2 border-blue-500 bg-blue-50 text-blue-800 font-semibold",
         day_selected:
-          "bg-primary text-white hover:bg-primary/90 focus:ring-2 focus:ring-primary",
+          "bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-400",
         day_outside: "text-gray-400",
         day_disabled: "text-gray-300 cursor-not-allowed",
-        day_range_middle: "bg-accent text-accent-foreground",
-        day_range_end: "bg-primary text
+        day_range_middle:
+          "bg-blue-100 text-blue-800 hover:bg-blue-200",
+        day_range_end: "bg-blue-600 text-white",
+        day_hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        IconLeft: () => <ChevronLeft className="h-4 w-4 text-gray-500" />,
+        IconRight: () => <ChevronRight className="h-4 w-4 text-gray-500" />,
+      }}
+      captionLayout="dropdown-buttons"
+      fromYear={1940}
+      toYear={2025}
+      ISOWeek
+      fixedWeeks
+      {...props}
+    />
+  );
+}
+Calendar.displayName = "Calendar";
+
+export { Calendar };
