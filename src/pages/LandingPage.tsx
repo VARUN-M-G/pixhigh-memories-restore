@@ -26,7 +26,7 @@ export default function LandingPage() {
               Transform Your Photos with AI
             </h1>
             <p className="text-lg md:text-xl text-gray-800 dark:text-gray-200 font-medium max-w-2xl mx-auto mb-10">
-              Enhance old photos, upscale low resolution images, and restore damaged pictures with our powerful AI technology
+              Enhance old photos, upscale low resolution+ images, and restore damaged pictures with our powerful AI technology
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto justify-center">
