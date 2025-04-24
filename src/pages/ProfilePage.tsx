@@ -377,9 +377,9 @@ export default function ProfilePage() {
                       <div>
                         <h3 className="text-sm font-medium text-muted-foreground mb-1">Date of Birth</h3>
                         <p>
-                          {user.dob
-                            ? format(new Date(user.dob), "yyyy-MM-dd")
-                            : "Not provided"}
+                        {   user.dob && isValid(new Date(user.dob))
+                             ? format(new Date(user.dob), "yyyy-MM-dd")
+                             : "Not provided"}
                         </p>
                       </div>
                     </div>
