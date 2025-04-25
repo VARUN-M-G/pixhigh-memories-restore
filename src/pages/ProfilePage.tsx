@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isValid } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar"; // <-- Updated Calendar we made!
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -286,23 +292,22 @@ export default function ProfilePage() {
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            variant={"outline"}
+            variant="outline"
             className={cn(
-              "w-full justify-start text-left font-normal glass-input rounded-2xl",
+              "w-full justify-start text-left font-normal rounded-2xl glass-input bg-zinc-900 border-zinc-700 text-white hover:bg-zinc-800",
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
             {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 pointer-events-auto">
+        <PopoverContent className="w-auto p-0 pointer-events-auto bg-zinc-900 border-zinc-700 rounded-2xl">
           <Calendar
             mode="single"
             selected={date}
             onSelect={setDate}
             initialFocus
-            className="p-3 pointer-events-auto"
           />
         </PopoverContent>
       </Popover>
