@@ -1,9 +1,8 @@
-# Welcome to your Lovable project
+# Welcome to PiXhigh
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/b39ebfc2-1d74-49e5-8a3c-6e1cba41c4ab
-
+**URL**: https://pixhigh.netlify.app 
 ## How can I edit this code?
 
 There are several ways of editing your application.
