@@ -1,78 +1,78 @@
-import * as React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker } from "react-day-picker";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
-function Calendar({
-  className,
-  classNames,
-  showOutsideDays = true,
-  ...props
-}: CalendarProps) {
-  return (
-    <DayPicker
-      showOutsideDays={showOutsideDays}
-      className={cn("p-3 pointer-events-auto", className)}
-      classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
-        caption_dropdowns: "flex gap-2",
-        caption_label: "sr-only",
-        dropdown: "relative z-10",
-        dropdown_month: "flex-1",
-        dropdown_year: "flex-1",
-        dropdown_icon: "h-4 w-4 opacity-50",
-        dropdown_dropdown:
-          "bg-popover text-popover-foreground rounded-md border border-border p-2 shadow-md",
-
-        nav: "space-x-1 flex items-center",
-        nav_button: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-        ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
-
-        table: "w-full border-collapse space-y-1",
-        head_row: "flex",
-        head_cell:
-          "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-        row: "flex w-full mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
-        day: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100"
-        ),
-        day_range_end: "day-range-end",
-        day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-        day_today: "bg-accent text-accent-foreground",
-        day_outside:
-          "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-        day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
-        day_hidden: "invisible",
-
-        ...classNames,
-      }}
-      components={{
-        IconLeft: () => <ChevronLeft className="h-4 w-4" />,
-        IconRight: () => <ChevronRight className="h-4 w-4" />,
-      }}
-      captionLayout="dropdown-buttons"
-      fromYear={1940}
-      toYear={2025}
-      ISOWeek
-      fixedWeeks
-      {...props}
-    />
-  );
+interface DateOfBirthSelectorProps {
+  value?: string;
+  onChange: (formattedDate: string | null) => void;
 }
 
-Calendar.displayName = "Calendar";
-export { Calendar };
+export const DateOfBirthSelector: React.FC<DateOfBirthSelectorProps> = ({ value, onChange }) => {
+  const [year, setYear] = useState<number | "">("");
+  const [month, setMonth] = useState<number | "">("");
+  const [day, setDay] = useState<number | "">("");
+
+  useEffect(() => {
+    if (value) {
+      const [y, m, d] = value.split("-").map(Number);
+      setYear(y);
+      setMonth(m);
+      setDay(d);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (year && month && day) {
+      const formatted = new Date(year, month - 1, day).toLocaleDateString("en-CA");
+      onChange(formatted);
+    } else {
+      onChange(null);
+    }
+  }, [year, month, day]);
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-white">Date of birth</Label>
+      <div className="flex items-center gap-2">
+        
+        {/* Month Select */}
+        <select
+          className="bg-zinc-900 text-white border border-zinc-700 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          value={month}
+          onChange={(e) => setMonth(Number(e.target.value))}
+        >
+          <option value="">Month</option>
+          {months.map((label, i) => (
+            <option key={i} value={i + 1}>{label}</option>
+          ))}
+        </select>
+
+        {/* Day Number */}
+        <input
+          type="number"
+          placeholder="Day"
+          min={1}
+          max={31}
+          value={day}
+          onChange={(e) => setDay(Number(e.target.value))}
+          className="bg-zinc-900 text-white border border-zinc-700 rounded-md px-4 py-2 w-20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+
+        {/* Year Number */}
+        <input
+          type="number"
+          placeholder="Year"
+          min={1900}
+          max={new Date().getFullYear()}
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+          className="bg-zinc-900 text-white border border-zinc-700 rounded-md px-4 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+      </div>
+    </div>
+  );
+};
