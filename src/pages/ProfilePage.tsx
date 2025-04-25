@@ -134,7 +134,7 @@ export default function ProfilePage() {
         .update({
           full_name: user.name,
           gender: user.gender || null,
-          date_of_birth: date ? date.toISOString() : null,
+          date_of_birth: date ? date.toLocaleDateString('en-CA') : null,
           phone_number: user.phone || null,
           avatar_url: avatarUrl
         })
