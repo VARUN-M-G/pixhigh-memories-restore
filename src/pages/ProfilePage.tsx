@@ -140,7 +140,7 @@ export default function ProfilePage() {
         .update({
           full_name: user.name,
           gender: user.gender || null,
-          date_of_birth: date ? date.toLocaleDateString('en-CA') : null,
+          date_of_birth: date ? date.toLocaleDateString('en-CA') : null,
           phone_number: user.phone || null,
           avatar_url: avatarUrl
         })
@@ -288,30 +288,30 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="space-y-2">
-      <Label htmlFor="dateOfBirth">Date of Birth</Label>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal rounded-2xl glass-input bg-zinc-900 border-zinc-700 text-white hover:bg-zinc-800",
-              !date && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
-            {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 pointer-events-auto bg-zinc-900 border-zinc-700 rounded-2xl">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            initialFocus
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
+                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal rounded-2xl glass-input bg-zinc-900 border-zinc-700 text-white hover:bg-zinc-800",
+                              !date && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
+                            {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 pointer-events-auto bg-zinc-900 border-zinc-700 rounded-2xl">
+                          <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={setDate}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="phoneNumber">Phone Number</Label>
@@ -382,8 +382,8 @@ export default function ProfilePage() {
                         <h3 className="text-sm font-medium text-muted-foreground mb-1">Date of Birth</h3>
                         <p>
                           {user.dob && isValid(new Date(user.dob))
-                           ? format(new Date(user.dob), "yyyy-MM-dd")
-                           : "Not provided"}
+                            ? format(new Date(user.dob), "yyyy-MM-dd")
+                            : "Not provided"}
                         </p>
                       </div>
                     </div>
