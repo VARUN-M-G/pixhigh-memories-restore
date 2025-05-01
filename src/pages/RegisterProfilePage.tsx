@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -18,16 +19,8 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
+import { DateSelect } from "@/components/ui/date-select"; // New import
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import {
-  CalendarIcon,
   UploadCloud,
   X,
   Loader2,
@@ -251,29 +244,10 @@ export default function RegisterProfilePage() {
 
               <div className="space-y-2">
                 <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal glass-input",
-                        !date && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
+                <DateSelect 
+                  value={date} 
+                  onChange={setDate}
+                />
               </div>
 
               <div className="space-y-2">

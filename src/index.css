@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -141,6 +142,19 @@
     );
     transform: rotate(30deg);
     animation: shine 3s infinite ease-in-out;
+  }
+  
+  .glass-input {
+    @apply bg-white/70 border border-white/60 focus:border-primary/50 focus:ring-1 focus:ring-primary/30 rounded-xl;
+  }
+  
+  .date-select-dropdown {
+    @apply rounded-xl bg-white/90 backdrop-blur-md border border-white/40 shadow-lg;
+  }
+  
+  /* Dark mode styles for date select */
+  .dark .date-select-dropdown {
+    @apply bg-gray-800/90 border-gray-700/40;
   }
   
   @keyframes shine {

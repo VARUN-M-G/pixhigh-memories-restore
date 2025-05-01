@@ -5,12 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isValid } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar"; // <-- Updated Calendar we made!
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -28,10 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, ChevronLeft, Edit2, Loader2, LogOut, UploadCloud } from "lucide-react";
+import { DateSelect } from "@/components/ui/date-select";
+import { ChevronLeft, Edit2, Loader2, LogOut, UploadCloud } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -288,32 +280,12 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="space-y-2">
-  <Label htmlFor="dateOfBirth">Date of Birth</Label>
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button
-        variant="outline"
-        className={cn(
-          "w-full justify-start text-left font-normal rounded-2xl glass-input",
-          "bg-popover text-popover-foreground border border-border hover:bg-accent",
-          !date && "text-muted-foreground"
-        )}
-      >
-        <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
-        {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className="w-auto p-0 pointer-events-auto bg-popover text-popover-foreground border border-border rounded-2xl">
-      <Calendar
-        mode="single"
-        selected={date}
-        onSelect={setDate}
-        initialFocus
-      />
-    </PopoverContent>
-  </Popover>
-</div>
-
+                      <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                      <DateSelect 
+                        value={date}
+                        onChange={setDate}
+                      />
+                    </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="phoneNumber">Phone Number</Label>
@@ -438,5 +410,3 @@ export default function ProfilePage() {
     </MainLayout>
   );
 }
-
-// Reminder: This file is getting long. Consider refactoring it into smaller, focused components for maintainability.
