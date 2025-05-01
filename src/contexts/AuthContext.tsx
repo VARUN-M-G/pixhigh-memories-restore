@@ -16,11 +16,56 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
+// Session timeout in milliseconds (10 minutes)
+const SESSION_TIMEOUT = 10 * 60 * 1000;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastActivity, setLastActivity] = useState(Date.now());
   const navigate = useNavigate();
+
+  // Update last activity time on user interaction
+  const updateActivity = () => {
+    setLastActivity(Date.now());
+  };
+
+  // Set up activity listeners
+  useEffect(() => {
+    // Array of events to listen for
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    
+    // Add event listeners
+    events.forEach(event => {
+      window.addEventListener(event, updateActivity);
+    });
+
+    // Cleanup event listeners
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, updateActivity);
+      });
+    };
+  }, []);
+
+  // Check for session timeout
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const timeSinceLastActivity = now - lastActivity;
+
+      if (timeSinceLastActivity >= SESSION_TIMEOUT) {
+        console.log('Session timeout due to inactivity');
+        toast.warning("Your session has expired due to inactivity");
+        signOut();
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [user, lastActivity]);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -113,7 +158,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('Google OAuth Error Details:', {
           message: error.message,
           status: error.status
-          // Removed the 'cause' property since it doesn't exist on AuthError
         });
         toast.error(`Google Sign-In Failed: ${error.message}`);
         throw error;

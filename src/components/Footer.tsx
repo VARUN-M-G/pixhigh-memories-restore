@@ -29,9 +29,15 @@ export function Footer() {
         </div>
         
         <div>
-          <h4 className="font-semibold mb-4">Contact</h4>
+          <h4 className="font-semibold mb-4">Legal & Contact</h4>
           <div className="space-y-2">
-            <p className="text-muted-foreground">
+            <Link to="/terms" className="block text-muted-foreground hover:text-foreground transition-colors">
+              Terms & Conditions
+            </Link>
+            <Link to="/privacy" className="block text-muted-foreground hover:text-foreground transition-colors">
+              Privacy Policy
+            </Link>
+            <p className="text-muted-foreground mt-4">
               Email: <a 
                 href="mailto:varunmg101@gmail.com" 
                 className="underline hover:text-blue-600 transition-colors"
