@@ -46,7 +46,7 @@ export function Footer() {
               </a>
             </p>
             <p className="text-muted-foreground">
-              © {new Date().getFullYear()} Varun M G. All rights reserved.
+              © {new Date().getFullYear()} Prajwal C | Tech Mahindra. All rights reserved.
             </p>
           </div>
         </div>
