@@ -12,6 +12,7 @@ interface AuthContextProps {
   signInWithEmail: (email: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  getToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -186,6 +187,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getToken = async (): Promise<string | null> => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      return data.session?.access_token ?? null;
+    } catch (error) {
+      console.error('Error getting token:', error);
+      return null;
+    }
+  };
+
   return (
     <AuthContext.Provider 
       value={{ 
@@ -194,7 +205,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading, 
         signInWithEmail, 
         signInWithGoogle, 
-        signOut 
+        signOut,
+        getToken 
       }}
     >
       {children}
